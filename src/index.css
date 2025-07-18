@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+body {
+  font-family: 'Inter', sans-serif;
+  font-display: swap;
+}
+
+.hover-checkbox,
+.hover-drag {
+  visibility: hidden;
+  transition: visibility 0.2s ease;
+}
+
+.ag-row-hover .hover-checkbox,
+.ag-row-hover .hover-drag {
+  visibility: visible;
+}
+
+.selection-active .hover-checkbox {
+  visibility: visible !important;
+}
+#grid-wrapper {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ag-theme-balham {
+  width: 100%;
+}
+
+/* Style for draggable sections */
+.section-block {
+  transition: all 0.3s ease;
+  background: white;
+  margin-bottom: 20px;
+  border-radius: 4px;
+}
+
+.section-block:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.section-block.dragging {
+  opacity: 0.5;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* Loading indicator styles */
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  background: #f5f5f5;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+.custom-tooltip {
+  background-color: #0051ff;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.4);
+  white-space: nowrap;
+  max-width: 300px;
+  pointer-events: none;
+}
+.ag-theme-balham {
+  min-height: 200px;
+}
+.sidebar {
+  width: 0;
+  transition: width 0.3s;
+}
+
+.sidebar.open {
+  width: 400px;
+}
