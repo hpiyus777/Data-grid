@@ -1,4 +1,5 @@
 import React from "react";
+import Chart from "react-apexcharts";
 import { statusConfig } from "./statusConfig";
 
 interface ProgressBarProps {
@@ -10,40 +11,60 @@ interface ProgressBarProps {
 }
 
 export const ProgressBar: React.FC<ProgressBarProps> = ({ stats }) => {
+  const labels = stats.map((s) => s.status);
+  const series = stats.map((s) => parseFloat(s.percentage));
+  const colors = stats.map((s) => {
+    const colorMatch = statusConfig[s.status]?.color || "bg-gray-400";
+    return colorMatch.replace("bg-[", "").replace("]", "");
+  });
+
+  const chartOptions = {
+    chart: {
+      type: "bar" as const,
+      height: 300,
+      toolbar: { show: false },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        barHeight: "50%",
+        distributed: true,
+      },
+    },
+    dataLabels: {
+      enabled: true,
+      style: {
+        fontSize: "12px",
+        colors: ["#111"],
+      },
+      formatter: (val: number) => `${val.toFixed(1)}%`,
+    },
+    xaxis: {
+      categories: labels,
+      labels: {
+        style: { fontSize: "12px", colors: "#333" },
+      },
+    },
+    colors: colors,
+    tooltip: {
+      y: {
+        formatter: (val: number) => `${val.toFixed(1)}%`,
+      },
+    },
+    legend: { show: false },
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-medium text-gray-900">
-          Estimates Progress Overview
-        </h2>
-      </div>
-      <div className="space-y-3">
-        {stats.map(({ status, count, percentage }) => {
-          const config = statusConfig[status];
-          if (!config) return null;
-          return (
-            <div key={status} className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className={`w-4 h-4 rounded ${config.color}`}></div>
-                <span className="text-sm text-gray-700">
-                  {status} ({count})
-                </span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-32 bg-gray-200 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full ${config.color}`}
-                    style={{ width: `${percentage}%` }}
-                  ></div>
-                </div>
-                <span className="text-sm font-medium text-gray-900 w-12">
-                  {percentage}%
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      <h2 className="text-lg font-medium text-gray-900 mb-4">
+        Estimates Progress Overview
+      </h2>
+      <Chart
+        options={chartOptions}
+        series={[{ data: series }]}
+        type="bar"
+        height={350}
+      />
     </div>
   );
 };
