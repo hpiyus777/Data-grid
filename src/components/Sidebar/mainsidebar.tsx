@@ -1,6 +1,7 @@
+import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FaTimes, FaTable, FaChartPie } from "react-icons/fa";
-import { MdListAlt } from "react-icons/md";
+import { MdListAlt, MdOutlineAddToPhotos } from "react-icons/md";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -8,61 +9,84 @@ interface SidebarProps {
   onSelect: (title: string) => void;
 }
 
+interface SidebarLinkProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  onSelect: (label: string) => void;
+}
+
+const SidebarLink = ({ to, icon, label, onSelect }: SidebarLinkProps) => (
+  <Link
+    to={to}
+    onClick={() => onSelect(label)}
+    className="flex items-center gap-2 hover:text-[#e94f37] transition-colors"
+  >
+    {icon} {label}
+  </Link>
+);
+
 const Sidebar = ({ isOpen, onClose, onSelect }: SidebarProps) => {
-  const handleSelect = (title: string) => {
-    onSelect(title);
-    onClose();
-  };
+  const handleSelect = useCallback(
+    (title: string) => {
+      onSelect(title);
+      onClose();
+    },
+    [onSelect, onClose]
+  );
 
   if (!isOpen) return null;
 
   return (
     <>
-      <div className="fixed inset-0 bg-opacity-30 z-40" onClick={onClose}></div>
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-[#393e41] text-white transform translate-x-0 transition-transform duration-300 z-50 shadow-lg`}
+        className="fixed inset-0 bg-opacity-30 z-40"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside
+        className="fixed top-0 left-0 h-full w-64 bg-[#393e41] text-white transition-transform duration-300 z-50 shadow-lg"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
       >
         <div className="flex justify-between items-center p-4 border-b border-gray-700">
           <h2 className="text-lg font-bold">Menu</h2>
           <button
             onClick={onClose}
             className="text-white text-xl hover:text-[#e94f37] transition-colors"
+            aria-label="Close sidebar"
           >
             <FaTimes />
           </button>
         </div>
         <nav className="flex flex-col p-4 space-y-4">
-          <Link
+          <SidebarLink
             to="/"
-            onClick={() => handleSelect("DataGrid")}
-            className="flex items-center gap-2 hover:text-[#e94f37] transition-colors"
-          >
-            <FaTable /> DataGrid
-          </Link>
-          <Link
+            icon={<FaTable />}
+            label="DataGrid"
+            onSelect={handleSelect}
+          />
+          <SidebarLink
             to="/dashboard"
-            onClick={() => handleSelect("Dashboard - Chart")}
-            className="flex items-center gap-2 hover:text-[#e94f37] transition-colors"
-          >
-            <FaChartPie /> Dashboard - Chart
-          </Link>
-          <Link
-            to="/term-conditions"
-            onClick={() => handleSelect("Terms and conditions")}
-            className="flex items-center gap-2 hover:text-[#e94f37] transition-colors"
-          >
-            <MdListAlt /> Terms
-          </Link>
-          <Link
+            icon={<FaChartPie />}
+            label="Dashboard - Chart"
+            onSelect={handleSelect}
+          />
+          <SidebarLink
             to="/additem"
-            onClick={() => handleSelect("Add Items")}
-            className="flex items-center gap-2 hover:text-[#e94f37] transition-colors"
-          >
-            <MdListAlt /> Add Item
-          </Link>
+            icon={<MdOutlineAddToPhotos />}
+            label="Add Items"
+            onSelect={handleSelect}
+          />
+          <SidebarLink
+            to="/term-conditions"
+            icon={<MdListAlt />}
+            label="Terms and conditions"
+            onSelect={handleSelect}
+          />
         </nav>
-      </div>
+      </aside>
     </>
   );
 };
