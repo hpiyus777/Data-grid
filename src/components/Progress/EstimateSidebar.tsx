@@ -80,8 +80,8 @@ export const EstimateSidebar: React.FC<EstimateSidebarProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
-      <div className="w-[400px] bg-white p-6 shadow-xl overflow-y-auto">
+    <div className="fixed inset-0 z-180 flex justify-end">
+      <div className="w-[400px] bg-white p-6 shadow-xl overflow-y-auto h-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">
             {estimate ? "Edit" : "Add"} Estimate
@@ -186,13 +186,13 @@ export const EstimateSidebar: React.FC<EstimateSidebarProps> = ({
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+            className="w-full bg-[#e94f37] text-white py-2 rounded hover:bg-blue-700"
           >
             {estimate ? "Update" : "Create"} Estimate
           </button>
         </form>
       </div>
-      <div className="flex-1 bg-black bg-opacity-30" onClick={onClose}></div>
+      <div className="" onClick={onClose}></div>
     </div>
   );
 };

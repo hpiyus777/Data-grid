@@ -3,7 +3,6 @@ import {
   ChevronLeft,
   Edit,
   Trash2,
-  MoreVertical,
   Building,
   DollarSign,
   Clock,
@@ -57,7 +56,7 @@ export const ProgressReport: React.FC<ProgressReportProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f6f7ef]">
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -92,9 +91,6 @@ export const ProgressReport: React.FC<ProgressReportProps> = ({
                 title="Delete Estimate"
               >
                 <Trash2 className="w-5 h-5" />
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-lg">
-                <MoreVertical className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -159,7 +155,7 @@ export const ProgressReport: React.FC<ProgressReportProps> = ({
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
             <div
-              className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+              className="bg-[#e94f37] h-3 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -183,7 +179,7 @@ export const ProgressReport: React.FC<ProgressReportProps> = ({
                 onClick={() =>
                   handleUpdateProgress(Math.min(100, progress + 10))
                 }
-                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                className="px-3 py-1 bg-[#e94f37] text-white rounded hover:bg-gray-400 text-sm"
               >
                 +10%
               </button>
@@ -194,7 +190,7 @@ export const ProgressReport: React.FC<ProgressReportProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="text-lg font-medium mb-4 flex items-center">
-              <Building className="w-5 h-5 mr-2 text-blue-600" />
+              <Building className="w-5 h-5 mr-2 text-[#e94f37]" />
               Estimate Details
             </h3>
             <div className="space-y-3">
@@ -289,12 +285,12 @@ export const ProgressReport: React.FC<ProgressReportProps> = ({
 
         <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
           <h3 className="text-lg font-medium mb-4 flex items-center">
-            <Clock className="w-5 h-5 mr-2 text-blue-600" />
+            <Clock className="w-5 h-5 mr-2 text-[#e94f37]" />
             Activity Timeline
           </h3>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-blue-600 rounded-full mt-1.5"></div>
+              <div className="w-2 h-2 bg-[#e94f37] rounded-full mt-1.5"></div>
               <div>
                 <p className="text-sm font-medium">Estimate Created</p>
                 <p className="text-xs text-gray-500">

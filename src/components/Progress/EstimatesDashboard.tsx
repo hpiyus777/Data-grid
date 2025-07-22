@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import type { Estimate } from "../../actions/types";
 import { EstimateTable } from "./EstimateTable";
 import { EstimateSidebar } from "./EstimateSidebar";
@@ -106,53 +106,52 @@ const EstimatesDashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Estimates Dashboard
-              </h1>
-              <p className="text-gray-600">Manage your project estimates</p>
-            </div>
-            <button
-              onClick={() => {
-                setEditingEstimate(null);
-                setSidebarOpen(true);
-              }}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Add Estimate</span>
-            </button>
+    <div className="min-h-screen bg-[#f6f7ef]">
+      {/* Header */}
+      <div className="bg-white border-b shadow-md">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Estimates Dashboard
+            </h1>
           </div>
+          <button
+            onClick={() => {
+              setEditingEstimate(null);
+              setSidebarOpen(true);
+            }}
+            className="inline-flex items-center gap-2 bg-[#e94f37] text-white px-4 py-2 rounded-md hover:bg-[#d8432f] shadow-md transition-all duration-200"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Add Estimate</span>
+          </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-6">
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {/* Progress Bar */}
         <ProgressBar stats={getStatusStats()} />
 
-        <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium">All Estimates</h2>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search estimates..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50">
-                <Filter className="w-5 h-5" />
-              </button>
+        {/* Estimates Table Block */}
+        <div className="bg-white rounded-xl shadow p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">
+              All Estimates
+            </h2>
+            <div className="relative">
+              <Search className="w-5 h-5 absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search estimates..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#e94f37] shadow-sm"
+              />
             </div>
           </div>
 
+          {/* Estimates Table */}
           <EstimateTable
             estimates={filteredEstimates}
             onView={(estimate) => {
@@ -168,6 +167,7 @@ const EstimatesDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Sidebar */}
       <EstimateSidebar
         isOpen={sidebarOpen}
         onClose={() => {

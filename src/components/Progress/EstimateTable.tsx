@@ -74,7 +74,7 @@ export const EstimateTable: React.FC<EstimateTableProps> = ({
                   <div className="flex items-center space-x-2">
                     <div className="w-24 bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-blue-600 h-2 rounded-full"
+                        className="bg-[#e94f37] h-2 rounded-full"
                         style={{ width: `${estimate.progress}%` }}
                       ></div>
                     </div>

@@ -85,7 +85,7 @@ const DataGrid: React.FC<Props> = ({ filterBySectionName, isEditing }) => {
         e.stopPropagation();
         openSidebar("itemDetails", params.data);
       }}
-      className="text-blue-500 hover:text-blue-700 transition-colors duration-200"
+      className="text-[#e94f37] hover:text-blue-700 transition-colors duration-200"
     >
       <FaEye className="text-lg text-black" />
     </button>

@@ -44,7 +44,7 @@ export const ProgressReportPage: React.FC = () => {
           </h2>
           <button
             onClick={() => navigate("/additem")}
-            className="text-blue-600 hover:text-blue-800"
+            className="text-[#e94f37] hover:text-gray-400"
           >
             Return to dashboard
           </button>
