@@ -36,7 +36,6 @@ const FileUpload: React.FC = () => {
 
   const removeFile = (index: number) => {
     alert("Are you sure you want to delete this file?");
-
     setFileList((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -81,9 +80,7 @@ const FileUpload: React.FC = () => {
               className="w-full h-full object-cover"
             />
 
-            {/* Hover Overlay */}
             <div className="absolute inset-0 z-10 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 opacity-0 group-hover:opacity-100">
-              {/* Delete Button (Top Right) */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -94,7 +91,6 @@ const FileUpload: React.FC = () => {
                 <DeleteOutlined className="text-sm" />
               </button>
 
-              {/* Centered Preview Button */}
               <div className="w-full h-full flex items-center justify-center">
                 <button
                   onClick={(e) => {
