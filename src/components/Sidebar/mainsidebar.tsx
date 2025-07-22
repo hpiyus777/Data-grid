@@ -85,6 +85,12 @@ const Sidebar = ({ isOpen, onClose, onSelect }: SidebarProps) => {
             label="Terms and conditions"
             onSelect={handleSelect}
           />
+          <SidebarLink
+            to="/files"
+            icon={<MdListAlt />}
+            label="Files"
+            onSelect={handleSelect}
+          />
         </nav>
       </aside>
     </>

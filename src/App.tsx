@@ -9,6 +9,7 @@ import Header from "./components/Header/header";
 import TermConditions from "./components/Sidebar/TermConditions";
 import { ProgressReportPage } from "./components/Progress/ProgressReportPage";
 import EstimatesDashboard from "./components/Progress/EstimatesDashboard";
+import Files from "./components/Sidebar/Files";
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -45,6 +46,7 @@ const App: React.FC = () => {
                 path="/progress-report/:id"
                 element={<ProgressReportPage />}
               />
+              <Route path="/files" element={<Files />} />
             </Routes>
           </div>
         </div>

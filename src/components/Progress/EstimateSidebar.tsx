@@ -41,23 +41,12 @@ export const EstimateSidebar: React.FC<EstimateSidebarProps> = ({
       });
     } else {
       setFormData({
-        title: "",
-        customer: "",
-        estimateNumber: "",
-        total: 0,
-        cost: 0,
-        profit: 0,
-        mu: 0,
-        pm: "",
-        type: "",
-        status: "Estimating",
-        progress: 0,
-        details: {},
+        ...formData,
       });
     }
   }, [estimate]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -72,7 +61,7 @@ export const EstimateSidebar: React.FC<EstimateSidebarProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     onSave(formData);
   };
