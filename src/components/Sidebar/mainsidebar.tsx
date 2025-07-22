@@ -54,6 +54,13 @@ const Sidebar = ({ isOpen, onClose, onSelect }: SidebarProps) => {
           >
             <MdListAlt /> Terms
           </Link>
+          <Link
+            to="/additem"
+            onClick={() => handleSelect("Add Items")}
+            className="flex items-center gap-2 hover:text-[#e94f37] transition-colors"
+          >
+            <MdListAlt /> Add Item
+          </Link>
         </nav>
       </div>
     </>

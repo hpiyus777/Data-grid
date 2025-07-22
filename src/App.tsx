@@ -7,6 +7,8 @@ import DataGrid from "./components/dataGrid";
 import Dashboard from "./components/Dashboard/dashboard";
 import Header from "./components/Header/header";
 import TermConditions from "./components/Sidebar/TermConditions";
+import { ProgressReportPage } from "./components/Progress/ProgressReportPage";
+import EstimatesDashboard from "./components/Progress/EstimatesDashboard";
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -38,6 +40,11 @@ const App: React.FC = () => {
               <Route path="/" element={<DataGrid />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/term-conditions" element={<TermConditions />} />
+              <Route path="/additem" element={<EstimatesDashboard />} />
+              <Route
+                path="/progress-report/:id"
+                element={<ProgressReportPage />}
+              />
             </Routes>
           </div>
         </div>
