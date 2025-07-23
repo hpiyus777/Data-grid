@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { Link } from "react-router-dom";
 import { FaTimes, FaTable, FaChartPie } from "react-icons/fa";
 import { MdListAlt, MdOutlineAddToPhotos } from "react-icons/md";
+import { FaClock } from "react-icons/fa6";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -89,6 +90,12 @@ const Sidebar = ({ isOpen, onClose, onSelect }: SidebarProps) => {
             to="/files"
             icon={<MdListAlt />}
             label="Files"
+            onSelect={handleSelect}
+          />
+          <SidebarLink
+            to="/time-cards"
+            icon={<FaClock />}
+            label="Time Cards"
             onSelect={handleSelect}
           />
         </nav>

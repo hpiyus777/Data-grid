@@ -77,3 +77,12 @@ body {
 .sidebar.open {
   width: 400px;
 }
+
+.react-calendar__tile--now {
+  background: #666 !important;
+}
+
+.react-calendar__tile--active {
+    background: #e94f37  !important;
+    color: white;
+}
