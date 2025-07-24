@@ -18,13 +18,9 @@ const FileUpload: React.FC = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
 
-  const handleChange = async ({
-    fileList: newFiles,
-  }: {
-    fileList: UploadFile[];
-  }) => {
+  const handleChange = async (info: { fileList: UploadFile[] }) => {
     const updatedFiles = await Promise.all(
-      newFiles.map(async (file) => {
+      info.fileList.map(async (file) => {
         if (!file.url && !file.preview && file.originFileObj) {
           file.preview = await getBase64(file.originFileObj as RcFile);
         }
@@ -51,22 +47,21 @@ const FileUpload: React.FC = () => {
     <>
       <div className="flex flex-wrap gap-4 items-start">
         {/* Upload Button */}
-        {fileList.length < 20 && (
-          <Upload
-            accept="image/*"
-            multiple
-            listType="picture-card"
-            fileList={[]}
-            onChange={handleChange}
-            beforeUpload={() => false}
-            showUploadList={false}
-          >
-            <div className="w-24 h-24 flex flex-col items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer">
-              <PlusOutlined className="text-2xl text-gray-400 mb-1" />
-              <div className="text-xs text-gray-500">Upload</div>
-            </div>
-          </Upload>
-        )}
+
+        <Upload
+          accept="image/*"
+          multiple
+          listType="picture-card"
+          fileList={fileList}
+          onChange={handleChange}
+          beforeUpload={() => false}
+          showUploadList={false}
+        >
+          <div className="w-24 h-24 flex flex-col items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 cursor-pointer">
+            <PlusOutlined className="text-2xl text-gray-400 mb-1" />
+            <div className="text-xs text-gray-500">Upload</div>
+          </div>
+        </Upload>
 
         {/* Image Thumbnails */}
         {fileList.map((file, index) => (
