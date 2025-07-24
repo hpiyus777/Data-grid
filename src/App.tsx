@@ -10,8 +10,7 @@ import TermConditions from "./components/Sidebar/TermConditions";
 import { ProgressReportPage } from "./components/Progress/ProgressReportPage";
 import EstimatesDashboard from "./components/Progress/EstimatesDashboard";
 import Files from "./components/Sidebar/Files";
-// import { TimePicker } from "antd";
-import Timecards from "./components/Time Cards/Timecards";
+import TimecardApp from "./components/Time Cards/TimecardApp";
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,7 +48,7 @@ const App: React.FC = () => {
                 element={<ProgressReportPage />}
               />
               <Route path="/files" element={<Files />} />
-              <Route path="/time-cards" element={<Timecards />} />
+              <Route path="/time-cards" element={<TimecardApp />} />
             </Routes>
           </div>
         </div>
