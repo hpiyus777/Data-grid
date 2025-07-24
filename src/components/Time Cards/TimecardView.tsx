@@ -117,7 +117,7 @@ const TimecardView = ({
             <div className="col-span-4">
               <input
                 type="text"
-                placeholder="+ Select Project"
+                placeholder="Select Project"
                 value={project}
                 onChange={(e) => setProject(e.target.value)}
                 className="border rounded px-3 py-2 text-sm w-full"
@@ -153,7 +153,7 @@ const TimecardView = ({
             </div>
             <div className="col-span-5 flex justify-end">
               <button
-                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm"
+                className="bg-black hover:bg-gray-400 text-white px-4 py-2 rounded-full text-sm"
                 onClick={() => {
                   if (project && costCode) {
                     setIsFormSubmitted(true);
@@ -179,16 +179,16 @@ const TimecardView = ({
               <div className="flex items-center justify-center mb-6">
                 <div className="relative">
                   {/* Clock circle */}
-                  <div className="w-24 h-24 rounded-full border-4 border-[#2d4974] flex items-center justify-center relative">
+                  <div className="w-24 h-24 rounded-full border-4 border-[#9900ff] flex items-center justify-center relative">
                     {/* Rotating arrow */}
                     <div
-                      className={`absolute top-2 left-1/2 w-0.5 h-8 bg-[#2d4974] origin-bottom rounded-full ${
+                      className={`absolute top-2 left-1/2 w-0.5 h-8 bg-[#9900ff] origin-bottom rounded-full ${
                         isTimerRunning ? "animate-rotate-clock-hand" : ""
                       }`}
                       style={{
                         transform: isTimerRunning
                           ? "translateX(-50%)"
-                          : "rotate(0deg) translateX(-50%)", // Stop at 12 when clocked out
+                          : "rotate(0deg) translateX(-50%)",
                         transition: "transform 0.3s ease-out",
                       }}
                     ></div>

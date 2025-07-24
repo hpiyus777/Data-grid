@@ -112,7 +112,7 @@ const TimecardApp = () => {
                 className={`flex items-center text-sm px-3 py-2 rounded transition-colors ${
                   activeView === "timecard"
                     ? "bg-[#e94f37] text-white"
-                    : "bg-[#1a355e] text-white hover:bg-[#2d4974]"
+                    : "bg-[#1a355e] text-white hover:bg-gray-400"
                 }`}
               >
                 <span className="mr-1">+</span> Time Card
@@ -122,7 +122,7 @@ const TimecardApp = () => {
                 className={`flex items-center text-sm px-3 py-2 rounded transition-colors ${
                   activeView === "crewcard"
                     ? "bg-[#e94f37] text-white"
-                    : "bg-[#1a355e] text-white hover:bg-[#2d4974]"
+                    : "bg-[#1a355e] text-white hover:bg-gray-400"
                 }`}
               >
                 <span className="mr-1">+</span> Crew Card
@@ -132,7 +132,7 @@ const TimecardApp = () => {
                 className={`flex items-center text-sm px-3 py-2 rounded transition-colors ${
                   activeView === "crewsheet"
                     ? "bg-[#e94f37] text-white"
-                    : "bg-[#1a355e] text-white hover:bg-[#2d4974]"
+                    : "bg-[#1a355e] text-white hover:bg-gray-400"
                 }`}
               >
                 <span className="mr-1">+</span> Crew Sheet

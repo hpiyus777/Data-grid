@@ -172,7 +172,7 @@ const CrewSheetView = ({
           </div>
           <div className="mt-6 text-right">
             <button
-              className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg"
+              className="bg-black hover:bg-gray-400 text-white px-6 py-2 rounded-lg"
               onClick={() => {
                 if (
                   sheetEmployee &&
@@ -207,7 +207,7 @@ const CrewSheetView = ({
                       style={{
                         transform: isSheetTimerRunning
                           ? "translateX(-50%)"
-                          : "rotate(0deg) translateX(-50%)", // Stop at 12 when clocked out
+                          : "rotate(0deg) translateX(-50%)",
                         transition: "transform 0.3s ease-out",
                       }}
                     ></div>

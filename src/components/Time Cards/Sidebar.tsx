@@ -80,7 +80,7 @@ const Sidebar = ({
                 <div
                   className={`w-2 h-2 rounded-full mt-2 ${
                     entry.type === "timecard"
-                      ? "bg-[#2d4974]"
+                      ? "bg-[#9900ff]"
                       : entry.type === "crewcard"
                       ? "bg-black"
                       : "bg-[#e94f37]"
