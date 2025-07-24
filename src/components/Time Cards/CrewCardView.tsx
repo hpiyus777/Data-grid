@@ -185,7 +185,17 @@ const CrewCardView = ({
               <div className="flex items-center justify-center mb-6">
                 <div className="relative">
                   <div className="w-24 h-24 rounded-full border-4 border-black flex items-center justify-center">
-                    <div className="w-4 h-4 bg-black rounded-full"></div>
+                    <div
+                      className={`absolute top-2 left-1/2 w-0.5 h-8 bg-black origin-bottom rounded-full ${
+                        isCrewTimerRunning ? "animate-rotate-clock-hand" : ""
+                      }`}
+                      style={{
+                        transform: isCrewTimerRunning
+                          ? "translateX(-50%)"
+                          : "rotate(0deg) translateX(-50%)", // Stop at 12 when clocked out
+                        transition: "transform 0.3s ease-out",
+                      }}
+                    ></div>
                   </div>
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                     <span className="bg-black text-white px-2 py-1 rounded text-sm">

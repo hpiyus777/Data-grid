@@ -22,7 +22,7 @@ const TimelineHistory = ({
             <div
               className={`absolute -left-2 top-1 w-3 h-3 rounded-full ${
                 entry.type === "timecard"
-                  ? "bg-[#bb0000]"
+                  ? "bg-[#2d4974]"
                   : entry.type === "crewcard"
                   ? "bg-black"
                   : "bg-[#e94f37]"
@@ -36,7 +36,7 @@ const TimelineHistory = ({
                 <span
                   className={`inline-block w-2 h-2 rounded-full ${
                     entry.type === "timecard"
-                      ? "bg-[#bb0000]"
+                      ? "bg-[#2d4974]"
                       : entry.type === "crewcard"
                       ? "bg-black"
                       : "bg-[#e94f37]"

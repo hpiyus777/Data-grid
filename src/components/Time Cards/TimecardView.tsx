@@ -178,9 +178,23 @@ const TimecardView = ({
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
               <div className="flex items-center justify-center mb-6">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full border-4 border-red-500 flex items-center justify-center">
-                    <div className="w-4 h-4 bg-red-500 rounded-full"></div>
+                  {/* Clock circle */}
+                  <div className="w-24 h-24 rounded-full border-4 border-[#2d4974] flex items-center justify-center relative">
+                    {/* Rotating arrow */}
+                    <div
+                      className={`absolute top-2 left-1/2 w-0.5 h-8 bg-[#2d4974] origin-bottom rounded-full ${
+                        isTimerRunning ? "animate-rotate-clock-hand" : ""
+                      }`}
+                      style={{
+                        transform: isTimerRunning
+                          ? "translateX(-50%)"
+                          : "rotate(0deg) translateX(-50%)", // Stop at 12 when clocked out
+                        transition: "transform 0.3s ease-out",
+                      }}
+                    ></div>
                   </div>
+
+                  {/* Time display */}
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                     <span className="bg-black text-white px-2 py-1 rounded text-sm">
                       {formatTime(timecardSeconds)}
@@ -188,6 +202,7 @@ const TimecardView = ({
                   </div>
                 </div>
               </div>
+
               <div className="flex justify-center space-x-4">
                 <button
                   onClick={handleClockIn}
@@ -205,6 +220,7 @@ const TimecardView = ({
                 </button>
               </div>
             </div>
+
             <div className="bg-gray-100 rounded-lg p-4 text-sm w-72 space-y-2 shadow-inner">
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Project</span>
