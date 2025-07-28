@@ -1,12 +1,32 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import type { HistoryData, HistoryEntry } from "./TimecardApp";
 
 type Props = {
   selectedDate: string;
   setHistoryData: React.Dispatch<React.SetStateAction<HistoryData>>;
   historyData: HistoryData;
-  sheetSeconds: number;
-  setSheetSeconds: React.Dispatch<React.SetStateAction<number>>;
+  crewSheetState?: {
+    isFormSubmitted: boolean;
+    isTimerRunning: boolean;
+    seconds: number;
+    sheetEmployee: string;
+    sheetSupervisor: string;
+    sheetProject: string;
+    sheetCostCode: string;
+    sheetNotes: string;
+  };
+  setCrewSheetState: (
+    state: Partial<{
+      isFormSubmitted: boolean;
+      isTimerRunning: boolean;
+      seconds: number;
+      sheetEmployee: string;
+      sheetSupervisor: string;
+      sheetProject: string;
+      sheetCostCode: string;
+      sheetNotes: string;
+    }>
+  ) => void;
 };
 
 const formatTime = (seconds: number) => {
@@ -18,40 +38,42 @@ const formatTime = (seconds: number) => {
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
+const defaultState = {
+  isFormSubmitted: false,
+  isTimerRunning: false,
+  seconds: 0,
+  sheetEmployee: "",
+  sheetSupervisor: "",
+  sheetProject: "",
+  sheetCostCode: "",
+  sheetNotes: "",
+};
+
 const CrewSheetView = ({
   selectedDate,
   setHistoryData,
-  sheetSeconds,
-  setSheetSeconds,
+  crewSheetState,
+  setCrewSheetState,
 }: Props) => {
-  const [isSheetTimerRunning, setIsSheetTimerRunning] = useState(false);
-  const [sheetFormSubmitted, setSheetFormSubmitted] = useState(false);
-  const [sheetEmployee, setSheetEmployee] = useState("");
-  const [sheetSupervisor, setSheetSupervisor] = useState("");
-  const [sheetProject, setSheetProject] = useState("");
-  const [sheetCostCode, setSheetCostCode] = useState("");
-  const [sheetNotes, setSheetNotes] = useState("");
+  const state = crewSheetState || defaultState;
 
   useEffect(() => {
     let interval: number | undefined;
-    if (isSheetTimerRunning) {
+    if (state.isTimerRunning) {
       interval = window.setInterval(() => {
-        setSheetSeconds((prev) => prev + 1);
+        setCrewSheetState({ seconds: (state.seconds || 0) + 1 });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isSheetTimerRunning, setSheetSeconds]);
+    // eslint-disable-next-line
+  }, [state.isTimerRunning, state.seconds]);
 
   useEffect(() => {
-    setSheetFormSubmitted(false);
-    setIsSheetTimerRunning(false);
-    setSheetSeconds(0);
-    setSheetEmployee("");
-    setSheetSupervisor("");
-    setSheetProject("");
-    setSheetCostCode("");
-    setSheetNotes("");
-  }, [selectedDate, setSheetSeconds]);
+    if (!crewSheetState) {
+      setCrewSheetState(defaultState);
+    }
+    // eslint-disable-next-line
+  }, [selectedDate]);
 
   const handleSheetClockIn = () => {
     const now = new Date();
@@ -64,18 +86,22 @@ const CrewSheetView = ({
       action: "Sheet Clocked In",
       type: "crewsheet",
       data: {
-        sheetEmployee,
-        sheetSupervisor,
-        sheetProject,
-        sheetCostCode,
-        sheetNotes,
+        sheetEmployee: state.sheetEmployee,
+        sheetSupervisor: state.sheetSupervisor,
+        sheetProject: state.sheetProject,
+        sheetCostCode: state.sheetCostCode,
+        sheetNotes: state.sheetNotes,
       },
     };
     setHistoryData((prev) => ({
       ...prev,
       [selectedDate]: [...(prev[selectedDate] || []), newEntry],
     }));
-    setIsSheetTimerRunning(true);
+    setCrewSheetState({
+      isFormSubmitted: true,
+      isTimerRunning: true,
+      seconds: 0,
+    });
   };
 
   const handleSheetClockOut = () => {
@@ -88,18 +114,27 @@ const CrewSheetView = ({
       time: timeString,
       action: "Sheet Clocked Out",
       type: "crewsheet",
-      data: { totalHours: formatTime(sheetSeconds) },
+      data: { totalHours: formatTime(state.seconds) },
     };
     setHistoryData((prev) => ({
       ...prev,
       [selectedDate]: [...(prev[selectedDate] || []), newEntry],
     }));
-    setIsSheetTimerRunning(false);
+    setCrewSheetState({
+      isFormSubmitted: false,
+      isTimerRunning: false,
+      seconds: 0,
+      sheetEmployee: "",
+      sheetSupervisor: "",
+      sheetProject: "",
+      sheetCostCode: "",
+      sheetNotes: "",
+    });
   };
 
   return (
     <>
-      {!sheetFormSubmitted && (
+      {!state.isFormSubmitted && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">
             Add Crew Sheet
@@ -111,8 +146,10 @@ const CrewSheetView = ({
                   Employee Name <span className="text-red-500">*</span>
                 </label>
                 <input
-                  value={sheetEmployee}
-                  onChange={(e) => setSheetEmployee(e.target.value)}
+                  value={state.sheetEmployee}
+                  onChange={(e) =>
+                    setCrewSheetState({ sheetEmployee: e.target.value })
+                  }
                   className="w-full border rounded px-3 py-2 text-sm"
                   placeholder="Enter employee name"
                 />
@@ -122,8 +159,10 @@ const CrewSheetView = ({
                   Supervisor <span className="text-red-500">*</span>
                 </label>
                 <input
-                  value={sheetSupervisor}
-                  onChange={(e) => setSheetSupervisor(e.target.value)}
+                  value={state.sheetSupervisor}
+                  onChange={(e) =>
+                    setCrewSheetState({ sheetSupervisor: e.target.value })
+                  }
                   className="w-full border rounded px-3 py-2 text-sm"
                   placeholder="Enter supervisor name"
                 />
@@ -135,8 +174,10 @@ const CrewSheetView = ({
                   Project/Location <span className="text-red-500">*</span>
                 </label>
                 <input
-                  value={sheetProject}
-                  onChange={(e) => setSheetProject(e.target.value)}
+                  value={state.sheetProject}
+                  onChange={(e) =>
+                    setCrewSheetState({ sheetProject: e.target.value })
+                  }
                   className="w-full border rounded px-3 py-2 text-sm"
                   placeholder="Enter project location"
                 />
@@ -146,8 +187,10 @@ const CrewSheetView = ({
                   Cost Code <span className="text-red-500">*</span>
                 </label>
                 <select
-                  value={sheetCostCode}
-                  onChange={(e) => setSheetCostCode(e.target.value)}
+                  value={state.sheetCostCode}
+                  onChange={(e) =>
+                    setCrewSheetState({ sheetCostCode: e.target.value })
+                  }
                   className="w-full border rounded px-3 py-2 text-sm"
                 >
                   <option value="">Select Cost Code</option>
@@ -162,8 +205,10 @@ const CrewSheetView = ({
                 Work Description
               </label>
               <textarea
-                value={sheetNotes}
-                onChange={(e) => setSheetNotes(e.target.value)}
+                value={state.sheetNotes}
+                onChange={(e) =>
+                  setCrewSheetState({ sheetNotes: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 text-sm"
                 placeholder="Enter work description..."
                 rows={4}
@@ -175,12 +220,11 @@ const CrewSheetView = ({
               className="bg-black hover:bg-gray-400 text-white px-6 py-2 rounded-lg"
               onClick={() => {
                 if (
-                  sheetEmployee &&
-                  sheetSupervisor &&
-                  sheetProject &&
-                  sheetCostCode
+                  state.sheetEmployee &&
+                  state.sheetSupervisor &&
+                  state.sheetProject &&
+                  state.sheetCostCode
                 ) {
-                  setSheetFormSubmitted(true);
                   handleSheetClockIn();
                 } else {
                   alert("Please fill all required fields");
@@ -193,7 +237,7 @@ const CrewSheetView = ({
         </div>
       )}
 
-      {sheetFormSubmitted && (
+      {state.isFormSubmitted && (
         <div className="flex items-center justify-center mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-8">
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -202,10 +246,10 @@ const CrewSheetView = ({
                   <div className="w-24 h-24 rounded-full border-4 border-[#e94f37] flex items-center justify-center">
                     <div
                       className={`absolute top-2 left-1/2 w-0.5 h-8 bg-[#e94f37] origin-bottom rounded-full ${
-                        isSheetTimerRunning ? "animate-rotate-clock-hand" : ""
+                        state.isTimerRunning ? "animate-rotate-clock-hand" : ""
                       }`}
                       style={{
-                        transform: isSheetTimerRunning
+                        transform: state.isTimerRunning
                           ? "translateX(-50%)"
                           : "rotate(0deg) translateX(-50%)",
                         transition: "transform 0.3s ease-out",
@@ -214,7 +258,7 @@ const CrewSheetView = ({
                   </div>
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                     <span className="bg-black text-white px-2 py-1 rounded text-sm">
-                      {formatTime(sheetSeconds)}
+                      {formatTime(state.seconds)}
                     </span>
                   </div>
                 </div>
@@ -222,14 +266,14 @@ const CrewSheetView = ({
               <div className="flex justify-center space-x-4">
                 <button
                   onClick={handleSheetClockIn}
-                  disabled={isSheetTimerRunning}
+                  disabled={state.isTimerRunning}
                   className="bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg"
                 >
                   Clock In
                 </button>
                 <button
                   onClick={handleSheetClockOut}
-                  disabled={!isSheetTimerRunning}
+                  disabled={!state.isTimerRunning}
                   className="bg-[#e94f37] hover:bg-red-600 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg"
                 >
                   Clock Out
@@ -239,24 +283,32 @@ const CrewSheetView = ({
             <div className="bg-gray-100 rounded-lg p-4 text-sm w-72 space-y-2 shadow-inner">
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Project</span>
-                <span className="text-gray-800">{sheetProject || "-"}</span>
+                <span className="text-gray-800">
+                  {state.sheetProject || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Cost Code</span>
-                <span className="text-gray-800">{sheetCostCode || "-"}</span>
+                <span className="text-gray-800">
+                  {state.sheetCostCode || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Supervisor</span>
-                <span className="text-gray-800">{sheetSupervisor || "-"}</span>
+                <span className="text-gray-800">
+                  {state.sheetSupervisor || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Employee</span>
-                <span className="text-gray-800">{sheetEmployee || "-"}</span>
+                <span className="text-gray-800">
+                  {state.sheetEmployee || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Work Desc</span>
                 <span className="text-gray-800 truncate">
-                  {sheetNotes || "-"}
+                  {state.sheetNotes || "-"}
                 </span>
               </div>
             </div>

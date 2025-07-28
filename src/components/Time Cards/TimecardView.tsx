@@ -1,13 +1,6 @@
-import { useState, useEffect } from "react";
-import type { HistoryData, HistoryEntry } from "./TimecardApp";
-
-type Props = {
-  selectedDate: string;
-  setHistoryData: React.Dispatch<React.SetStateAction<HistoryData>>;
-  historyData: HistoryData;
-  timecardSeconds: number;
-  setTimecardSeconds: React.Dispatch<React.SetStateAction<number>>;
-};
+import { useEffect } from "react";
+import type { HistoryEntry } from "./TimecardApp";
+import type { Props } from "react-apexcharts";
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -18,44 +11,46 @@ const formatTime = (seconds: number) => {
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
+const defaultState = {
+  isFormSubmitted: false,
+  isTimerRunning: false,
+  seconds: 0,
+  project: "",
+  serviceTicket: "",
+  costCode: "",
+  clockInTime: new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  }),
+};
+
 const TimecardView = ({
   selectedDate,
   setHistoryData,
-  timecardSeconds,
-  setTimecardSeconds,
+  timecardState,
+  setTimecardState,
 }: Props) => {
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
-  const [clockInTime, setClockInTime] = useState(() => {
-    const now = new Date();
-    return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  });
-  const [project, setProject] = useState("");
-  const [serviceTicket, setServiceTicket] = useState("");
-  const [costCode, setCostCode] = useState("");
+  const state = timecardState || defaultState;
 
+  // Timer effect
   useEffect(() => {
     let interval: number | undefined;
-    if (isTimerRunning) {
+    if (state.isTimerRunning) {
       interval = window.setInterval(() => {
-        setTimecardSeconds((prev) => prev + 1);
+        setTimecardState({ seconds: (state.seconds || 0) + 1 });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isTimerRunning, setTimecardSeconds]);
+    // eslint-disable-next-line
+  }, [state.isTimerRunning, state.seconds]);
 
   // Reset on date change
   useEffect(() => {
-    setIsFormSubmitted(false);
-    setIsTimerRunning(false);
-    setTimecardSeconds(0);
-    setProject("");
-    setServiceTicket("");
-    setCostCode("");
-    setClockInTime(
-      new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-    );
-  }, [selectedDate, setTimecardSeconds]);
+    if (!timecardState) {
+      setTimecardState(defaultState);
+    }
+    // eslint-disable-next-line
+  }, [selectedDate]);
 
   const handleClockIn = () => {
     const now = new Date();
@@ -67,13 +62,22 @@ const TimecardView = ({
       time: timeString,
       action: "Clocked In",
       type: "timecard",
-      data: { project, serviceTicket, costCode },
+      data: {
+        project: state.project,
+        serviceTicket: state.serviceTicket,
+        costCode: state.costCode,
+      },
     };
-    setHistoryData((prev) => ({
+    setHistoryData((prev: any) => ({
       ...prev,
       [selectedDate]: [...(prev[selectedDate] || []), newEntry],
     }));
-    setIsTimerRunning(true);
+    setTimecardState({
+      isFormSubmitted: true,
+      isTimerRunning: true,
+      clockInTime: timeString,
+      seconds: 0,
+    });
   };
 
   const handleClockOut = () => {
@@ -86,18 +90,29 @@ const TimecardView = ({
       time: timeString,
       action: "Clocked Out",
       type: "timecard",
-      data: { totalHours: formatTime(timecardSeconds) },
+      data: { totalHours: formatTime(state.seconds) },
     };
-    setHistoryData((prev) => ({
+    setHistoryData((prev: any) => ({
       ...prev,
       [selectedDate]: [...(prev[selectedDate] || []), newEntry],
     }));
-    setIsTimerRunning(false);
+    setTimecardState({
+      isTimerRunning: false,
+      isFormSubmitted: false,
+      seconds: 0,
+      project: "",
+      serviceTicket: "",
+      costCode: "",
+      clockInTime: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
   };
 
   return (
     <>
-      {!isFormSubmitted && (
+      {!state.isFormSubmitted ? (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6 max-w-4xl mx-auto space-y-4">
           <div className="grid grid-cols-5 gap-4 items-center">
             <label className="text-sm font-medium col-span-1">
@@ -106,8 +121,10 @@ const TimecardView = ({
             <div className="col-span-4 flex items-center">
               <input
                 type="text"
-                value={clockInTime}
-                onChange={(e) => setClockInTime(e.target.value)}
+                value={state.clockInTime}
+                onChange={(e) =>
+                  setTimecardState({ clockInTime: e.target.value })
+                }
                 className="border rounded px-3 py-2 text-sm w-full"
               />
             </div>
@@ -118,8 +135,8 @@ const TimecardView = ({
               <input
                 type="text"
                 placeholder="Select Project"
-                value={project}
-                onChange={(e) => setProject(e.target.value)}
+                value={state.project}
+                onChange={(e) => setTimecardState({ project: e.target.value })}
                 className="border rounded px-3 py-2 text-sm w-full"
               />
             </div>
@@ -128,8 +145,10 @@ const TimecardView = ({
             </label>
             <div className="col-span-4">
               <select
-                value={serviceTicket}
-                onChange={(e) => setServiceTicket(e.target.value)}
+                value={state.serviceTicket}
+                onChange={(e) =>
+                  setTimecardState({ serviceTicket: e.target.value })
+                }
                 className="border rounded px-3 py-2 text-sm w-full"
               >
                 <option>Unassigned</option>
@@ -142,8 +161,8 @@ const TimecardView = ({
             </label>
             <div className="col-span-4">
               <select
-                value={costCode}
-                onChange={(e) => setCostCode(e.target.value)}
+                value={state.costCode}
+                onChange={(e) => setTimecardState({ costCode: e.target.value })}
                 className="border rounded px-3 py-2 text-sm w-full"
               >
                 <option value="">Unassigned</option>
@@ -155,8 +174,7 @@ const TimecardView = ({
               <button
                 className="bg-black hover:bg-gray-400 text-white px-4 py-2 rounded-full text-sm"
                 onClick={() => {
-                  if (project && costCode) {
-                    setIsFormSubmitted(true);
+                  if (state.project && state.costCode) {
                     handleClockIn();
                   } else {
                     alert(
@@ -170,9 +188,7 @@ const TimecardView = ({
             </div>
           </div>
         </div>
-      )}
-
-      {isFormSubmitted && (
+      ) : (
         <div className="flex items-center justify-center mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-8">
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -183,58 +199,57 @@ const TimecardView = ({
                     {/* Rotating arrow */}
                     <div
                       className={`absolute top-2 left-1/2 w-0.5 h-8 bg-[#9900ff] origin-bottom rounded-full ${
-                        isTimerRunning ? "animate-rotate-clock-hand" : ""
+                        state.isTimerRunning ? "animate-rotate-clock-hand" : ""
                       }`}
                       style={{
-                        transform: isTimerRunning
+                        transform: state.isTimerRunning
                           ? "translateX(-50%)"
                           : "rotate(0deg) translateX(-50%)",
                         transition: "transform 0.3s ease-out",
                       }}
                     ></div>
                   </div>
-
                   {/* Time display */}
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                     <span className="bg-black text-white px-2 py-1 rounded text-sm">
-                      {formatTime(timecardSeconds)}
+                      {formatTime(state.seconds)}
                     </span>
                   </div>
                 </div>
               </div>
-
               <div className="flex justify-center space-x-4">
                 <button
                   onClick={handleClockIn}
-                  disabled={isTimerRunning}
+                  disabled={state.isTimerRunning}
                   className="bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition-colors"
                 >
                   Clock In
                 </button>
                 <button
                   onClick={handleClockOut}
-                  disabled={!isTimerRunning}
+                  disabled={!state.isTimerRunning}
                   className="bg-[#e94f37] hover:bg-red-600 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg transition-colors"
                 >
                   Clock Out
                 </button>
               </div>
             </div>
-
             <div className="bg-gray-100 rounded-lg p-4 text-sm w-72 space-y-2 shadow-inner">
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Project</span>
-                <span className="text-gray-800">{project || "-"}</span>
+                <span className="text-gray-800">{state.project || "-"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">
                   Service Ticket
                 </span>
-                <span className="text-gray-800">{serviceTicket || "-"}</span>
+                <span className="text-gray-800">
+                  {state.serviceTicket || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Cost Code</span>
-                <span className="text-gray-800">{costCode || "-"}</span>
+                <span className="text-gray-800">{state.costCode || "-"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Any Injury</span>

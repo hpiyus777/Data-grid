@@ -57,6 +57,43 @@ const TimecardApp = () => {
   const [timecardSeconds, setTimecardSeconds] = useState(0);
   const [crewSeconds, setCrewSeconds] = useState(0);
   const [sheetSeconds, setSheetSeconds] = useState(0);
+  const [timecardStates, setTimecardStates] = useState<{
+    [date: string]: {
+      isFormSubmitted: boolean;
+      isTimerRunning: boolean;
+      seconds: number;
+      project: string;
+      serviceTicket: string;
+      costCode: string;
+      clockInTime: string;
+    };
+  }>({});
+
+  const [crewCardStates, setCrewCardStates] = useState<{
+    [date: string]: {
+      isFormSubmitted: boolean;
+      isTimerRunning: boolean;
+      seconds: number;
+      employee: string;
+      supervisor: string;
+      projectLocation: string;
+      crewCostCode: string;
+      notes: string;
+    };
+  }>({});
+
+  const [crewSheetStates, setCrewSheetStates] = useState<{
+    [date: string]: {
+      isFormSubmitted: boolean;
+      isTimerRunning: boolean;
+      seconds: number;
+      sheetEmployee: string;
+      sheetSupervisor: string;
+      sheetProject: string;
+      sheetCostCode: string;
+      sheetNotes: string;
+    };
+  }>({});
 
   // Reset all timer states (called on date change)
   const resetAllStates = () => {
@@ -149,8 +186,13 @@ const TimecardApp = () => {
                 selectedDate={selectedDate}
                 setHistoryData={setHistoryData}
                 historyData={historyData}
-                timecardSeconds={timecardSeconds}
-                setTimecardSeconds={setTimecardSeconds}
+                timecardState={timecardStates[selectedDate]}
+                setTimecardState={(state: any) =>
+                  setTimecardStates((prev) => ({
+                    ...prev,
+                    [selectedDate]: { ...prev[selectedDate], ...state },
+                  }))
+                }
               />
             )}
             {activeView === "crewcard" && (
@@ -158,8 +200,13 @@ const TimecardApp = () => {
                 selectedDate={selectedDate}
                 setHistoryData={setHistoryData}
                 historyData={historyData}
-                crewSeconds={crewSeconds}
-                setCrewSeconds={setCrewSeconds}
+                crewCardState={crewCardStates[selectedDate]}
+                setCrewCardState={(state: any) =>
+                  setCrewCardStates((prev) => ({
+                    ...prev,
+                    [selectedDate]: { ...prev[selectedDate], ...state },
+                  }))
+                }
               />
             )}
             {activeView === "crewsheet" && (
@@ -167,8 +214,13 @@ const TimecardApp = () => {
                 selectedDate={selectedDate}
                 setHistoryData={setHistoryData}
                 historyData={historyData}
-                sheetSeconds={sheetSeconds}
-                setSheetSeconds={setSheetSeconds}
+                crewSheetState={crewSheetStates[selectedDate]}
+                setCrewSheetState={(state: any) =>
+                  setCrewSheetStates((prev) => ({
+                    ...prev,
+                    [selectedDate]: { ...prev[selectedDate], ...state },
+                  }))
+                }
               />
             )}
 

@@ -1,13 +1,6 @@
-import { useState, useEffect } from "react";
-import type { HistoryData, HistoryEntry } from "./TimecardApp";
-
-type Props = {
-  selectedDate: string;
-  setHistoryData: React.Dispatch<React.SetStateAction<HistoryData>>;
-  historyData: HistoryData;
-  crewSeconds: number;
-  setCrewSeconds: React.Dispatch<React.SetStateAction<number>>;
-};
+import { useEffect } from "react";
+import type { HistoryEntry } from "./TimecardApp";
+import type { Props } from "react-apexcharts";
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -18,40 +11,43 @@ const formatTime = (seconds: number) => {
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
+const defaultState = {
+  isFormSubmitted: false,
+  isTimerRunning: false,
+  seconds: 0,
+  employee: "",
+  supervisor: "",
+  projectLocation: "",
+  crewCostCode: "",
+  notes: "",
+};
+
 const CrewCardView = ({
   selectedDate,
   setHistoryData,
-  crewSeconds,
-  setCrewSeconds,
+
+  crewCardState,
+  setCrewCardState,
 }: Props) => {
-  const [isCrewTimerRunning, setIsCrewTimerRunning] = useState(false);
-  const [crewFormSubmitted, setCrewFormSubmitted] = useState(false);
-  const [employee, setEmployee] = useState("");
-  const [supervisor, setSupervisor] = useState("");
-  const [projectLocation, setProjectLocation] = useState("");
-  const [crewCostCode, setCrewCostCode] = useState("");
-  const [notes, setNotes] = useState("");
+  const state = crewCardState || defaultState;
 
   useEffect(() => {
     let interval: number | undefined;
-    if (isCrewTimerRunning) {
+    if (state.isTimerRunning) {
       interval = window.setInterval(() => {
-        setCrewSeconds((prev) => prev + 1);
+        setCrewCardState({ seconds: (state.seconds || 0) + 1 });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isCrewTimerRunning, setCrewSeconds]);
+    // eslint-disable-next-line
+  }, [state.isTimerRunning, state.seconds]);
 
   useEffect(() => {
-    setCrewFormSubmitted(false);
-    setIsCrewTimerRunning(false);
-    setCrewSeconds(0);
-    setEmployee("");
-    setSupervisor("");
-    setProjectLocation("");
-    setCrewCostCode("");
-    setNotes("");
-  }, [selectedDate, setCrewSeconds]);
+    if (!crewCardState) {
+      setCrewCardState(defaultState);
+    }
+    // eslint-disable-next-line
+  }, [selectedDate]);
 
   const handleCrewClockIn = () => {
     const now = new Date();
@@ -63,13 +59,23 @@ const CrewCardView = ({
       time: timeString,
       action: "Crew Clocked In",
       type: "crewcard",
-      data: { employee, supervisor, projectLocation, crewCostCode, notes },
+      data: {
+        employee: state.employee,
+        supervisor: state.supervisor,
+        projectLocation: state.projectLocation,
+        crewCostCode: state.crewCostCode,
+        notes: state.notes,
+      },
     };
-    setHistoryData((prev) => ({
+    setHistoryData((prev: any) => ({
       ...prev,
       [selectedDate]: [...(prev[selectedDate] || []), newEntry],
     }));
-    setIsCrewTimerRunning(true);
+    setCrewCardState({
+      isFormSubmitted: true,
+      isTimerRunning: true,
+      seconds: 0,
+    });
   };
 
   const handleCrewClockOut = () => {
@@ -82,18 +88,27 @@ const CrewCardView = ({
       time: timeString,
       action: "Crew Clocked Out",
       type: "crewcard",
-      data: { totalHours: formatTime(crewSeconds) },
+      data: { totalHours: formatTime(state.seconds) },
     };
-    setHistoryData((prev) => ({
+    setHistoryData((prev: any) => ({
       ...prev,
       [selectedDate]: [...(prev[selectedDate] || []), newEntry],
     }));
-    setIsCrewTimerRunning(false);
+    setCrewCardState({
+      isFormSubmitted: false,
+      isTimerRunning: false,
+      seconds: 0,
+      employee: "",
+      supervisor: "",
+      projectLocation: "",
+      crewCostCode: "",
+      notes: "",
+    });
   };
 
   return (
     <>
-      {!crewFormSubmitted && (
+      {!state.isFormSubmitted && (
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-800">
             Add Crew Time Card
@@ -104,8 +119,8 @@ const CrewCardView = ({
                 Employees <span className="text-red-500">*</span>
               </label>
               <input
-                value={employee}
-                onChange={(e) => setEmployee(e.target.value)}
+                value={state.employee}
+                onChange={(e) => setCrewCardState({ employee: e.target.value })}
                 className="w-full border rounded px-3 py-2 text-sm"
                 placeholder="Enter employee name"
               />
@@ -115,8 +130,10 @@ const CrewCardView = ({
                 Supervisor <span className="text-red-500">*</span>
               </label>
               <input
-                value={supervisor}
-                onChange={(e) => setSupervisor(e.target.value)}
+                value={state.supervisor}
+                onChange={(e) =>
+                  setCrewCardState({ supervisor: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 text-sm"
                 placeholder="Enter supervisor name"
               />
@@ -126,8 +143,10 @@ const CrewCardView = ({
                 Project/Location <span className="text-red-500">*</span>
               </label>
               <input
-                value={projectLocation}
-                onChange={(e) => setProjectLocation(e.target.value)}
+                value={state.projectLocation}
+                onChange={(e) =>
+                  setCrewCardState({ projectLocation: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 text-sm"
                 placeholder="Enter project location"
               />
@@ -137,8 +156,10 @@ const CrewCardView = ({
                 Cost Code <span className="text-red-500">*</span>
               </label>
               <select
-                value={crewCostCode}
-                onChange={(e) => setCrewCostCode(e.target.value)}
+                value={state.crewCostCode}
+                onChange={(e) =>
+                  setCrewCardState({ crewCostCode: e.target.value })
+                }
                 className="w-full border rounded px-3 py-2 text-sm"
               >
                 <option value="">Select Cost Code</option>
@@ -153,8 +174,8 @@ const CrewCardView = ({
               Notes
             </label>
             <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              value={state.notes}
+              onChange={(e) => setCrewCardState({ notes: e.target.value })}
               className="w-full border rounded px-3 py-2 text-sm"
               placeholder="Add description..."
               rows={3}
@@ -164,8 +185,12 @@ const CrewCardView = ({
             <button
               className="bg-black hover:bg-gray-400 text-white px-6 py-2 rounded-lg"
               onClick={() => {
-                if (employee && supervisor && projectLocation && crewCostCode) {
-                  setCrewFormSubmitted(true);
+                if (
+                  state.employee &&
+                  state.supervisor &&
+                  state.projectLocation &&
+                  state.crewCostCode
+                ) {
                   handleCrewClockIn();
                 } else {
                   alert("Please fill all required fields");
@@ -178,7 +203,7 @@ const CrewCardView = ({
         </div>
       )}
 
-      {crewFormSubmitted && (
+      {state.isFormSubmitted && (
         <div className="flex items-center justify-center mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-8">
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -187,10 +212,10 @@ const CrewCardView = ({
                   <div className="w-24 h-24 rounded-full border-4 border-black flex items-center justify-center">
                     <div
                       className={`absolute top-2 left-1/2 w-0.5 h-8 bg-black origin-bottom rounded-full ${
-                        isCrewTimerRunning ? "animate-rotate-clock-hand" : ""
+                        state.isTimerRunning ? "animate-rotate-clock-hand" : ""
                       }`}
                       style={{
-                        transform: isCrewTimerRunning
+                        transform: state.isTimerRunning
                           ? "translateX(-50%)"
                           : "rotate(0deg) translateX(-50%)",
                         transition: "transform 0.3s ease-out",
@@ -199,7 +224,7 @@ const CrewCardView = ({
                   </div>
                   <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                     <span className="bg-black text-white px-2 py-1 rounded text-sm">
-                      {formatTime(crewSeconds)}
+                      {formatTime(state.seconds)}
                     </span>
                   </div>
                 </div>
@@ -207,14 +232,14 @@ const CrewCardView = ({
               <div className="flex justify-center space-x-4">
                 <button
                   onClick={handleCrewClockIn}
-                  disabled={isCrewTimerRunning}
+                  disabled={state.isTimerRunning}
                   className="bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg"
                 >
                   Clock In
                 </button>
                 <button
                   onClick={handleCrewClockOut}
-                  disabled={!isCrewTimerRunning}
+                  disabled={!state.isTimerRunning}
                   className="bg-[#e94f37] hover:bg-red-600 disabled:bg-gray-400 text-white px-6 py-2 rounded-lg"
                 >
                   Clock Out
@@ -224,23 +249,27 @@ const CrewCardView = ({
             <div className="bg-gray-100 rounded-lg p-4 text-sm w-72 space-y-2 shadow-inner">
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Project</span>
-                <span className="text-gray-800">{projectLocation || "-"}</span>
+                <span className="text-gray-800">
+                  {state.projectLocation || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Cost Code</span>
-                <span className="text-gray-800">{crewCostCode || "-"}</span>
+                <span className="text-gray-800">
+                  {state.crewCostCode || "-"}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Supervisor</span>
-                <span className="text-gray-800">{supervisor || "-"}</span>
+                <span className="text-gray-800">{state.supervisor || "-"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Employees</span>
-                <span className="text-gray-800">{employee || "-"}</span>
+                <span className="text-gray-800">{state.employee || "-"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500 font-medium">Notes</span>
-                <span className="text-gray-800">{notes || "-"}</span>
+                <span className="text-gray-800">{state.notes || "-"}</span>
               </div>
             </div>
           </div>
